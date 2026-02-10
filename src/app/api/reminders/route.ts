@@ -6,7 +6,7 @@ export async function GET() {
   try {
     const family = await requireFamily();
     const result = await query('SELECT * FROM reminders WHERE family_id = $1 AND completed = FALSE ORDER BY due_at ASC NULLS LAST', [family.id]);
-    return NextResponse.json(result.rows);
+    return NextResponse.json({ reminders: result.rows });
   } catch (e) {
     if ((e as Error).message === 'Unauthorized') return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });

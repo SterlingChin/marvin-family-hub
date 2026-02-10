@@ -9,7 +9,7 @@ export async function GET(_request: Request, { params }: { params: Promise<{ id:
     const conv = await query('SELECT * FROM conversations WHERE id = $1 AND family_id = $2', [id, family.id]);
     if (conv.rows.length === 0) return NextResponse.json({ error: 'Not found' }, { status: 404 });
     const messages = await query('SELECT * FROM messages WHERE conversation_id = $1 ORDER BY created_at', [id]);
-    return NextResponse.json({ ...conv.rows[0], messages: messages.rows });
+    return NextResponse.json({ conversation: conv.rows[0], messages: messages.rows });
   } catch (e) {
     if ((e as Error).message === 'Unauthorized') return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
