@@ -6,11 +6,11 @@ export async function PUT(request: Request, { params }: { params: Promise<{ id: 
   try {
     const family = await requireFamily();
     const { id } = await params;
-    const { name, role, age, school, work, notes } = await request.json();
+    const { name, role, age, school, work, notes, avatar } = await request.json();
     const result = await query(
-      `UPDATE family_members SET name = COALESCE($1, name), role = COALESCE($2, role), age = $3, school = $4, work = $5, notes = $6
-       WHERE id = $7 AND family_id = $8 RETURNING *`,
-      [name, role, age ?? null, school ?? null, work ?? null, notes ?? null, id, family.id]
+      `UPDATE family_members SET name = COALESCE($1, name), role = COALESCE($2, role), age = $3, school = $4, work = $5, notes = $6, avatar = COALESCE($7, avatar)
+       WHERE id = $8 AND family_id = $9 RETURNING *`,
+      [name, role, age ?? null, school ?? null, work ?? null, notes ?? null, avatar, id, family.id]
     );
     if (result.rows.length === 0) return NextResponse.json({ error: 'Not found' }, { status: 404 });
     return NextResponse.json(result.rows[0]);

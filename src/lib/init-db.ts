@@ -18,6 +18,7 @@ export async function initDb() {
       school TEXT,
       work TEXT,
       notes TEXT,
+      avatar TEXT DEFAULT '👤',
       created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
     );
     CREATE TABLE IF NOT EXISTS conversations (
@@ -62,4 +63,12 @@ export async function initDb() {
       UNIQUE(family_id, key)
     );
   `);
+
+  // Add avatar column if it doesn't exist (migration for existing DBs)
+  await pool.query(`
+    DO $$ BEGIN
+      ALTER TABLE family_members ADD COLUMN IF NOT EXISTS avatar TEXT DEFAULT '👤';
+    EXCEPTION WHEN duplicate_column THEN NULL;
+    END $$;
+  `).catch(() => {});
 }

@@ -55,61 +55,68 @@ export default function ChoresPage() {
     fetchChores();
   };
 
+  const getMemberAvatar = (name?: string) => {
+    const m = members.find(mem => mem.name === name);
+    return m?.avatar || "👤";
+  };
+
   const ChoreItem = ({ chore }: { chore: Chore }) => (
-    <div className={`flex items-center gap-3 p-3 rounded-xl border ${chore.completed ? "bg-[#F5F0EB]/50 border-[#E7E5E4]" : "bg-white border-[#F5F0EB] shadow-[0_1px_3px_rgba(180,140,100,0.08)]"}`}>
+    <div className={`flex items-center gap-3 p-3 rounded-xl border transition-colors ${
+      chore.completed ? "bg-white/5 border-white/5 opacity-60" : "glass-card hover:bg-white/10"
+    }`}>
       <input
         type="checkbox"
         checked={chore.completed}
         onChange={() => toggleChore(chore.id, !chore.completed)}
-        className="w-5 h-5 rounded-md accent-[#6366F1] shrink-0"
+        className="w-5 h-5 rounded-md accent-[#818CF8] shrink-0"
       />
+      {chore.assigned_to && (
+        <span className="text-lg shrink-0">{getMemberAvatar(chore.assigned_to)}</span>
+      )}
       <div className="flex-1 min-w-0">
-        <p className={`font-medium text-sm ${chore.completed ? "line-through text-[#A8A29E]" : "text-[#292524]"}`}>
+        <p className={`font-medium text-sm ${chore.completed ? "line-through text-[#A3A3A3]" : "text-[#F5F5F5]"}`}>
           {chore.title}
         </p>
-        <p className="text-xs text-[#A8A29E]">
+        <p className="text-xs text-[#A3A3A3]">
           {chore.assigned_to && `${chore.assigned_to} · `}
           <span className="capitalize">{chore.frequency}</span>
           {chore.completed_at && ` · Done ${new Date(chore.completed_at).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}`}
         </p>
       </div>
-      <button onClick={() => deleteChore(chore.id)} className="text-[#D6D3D1] hover:text-red-500 text-sm">🗑️</button>
+      <button onClick={() => deleteChore(chore.id)} className="text-[#A3A3A3]/40 hover:text-red-400 text-sm">🗑️</button>
     </div>
   );
 
   return (
     <div className="max-w-3xl mx-auto space-y-6">
       <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold text-[#292524]">🧹 Chores</h1>
-        <button onClick={() => setModalOpen(true)} className="px-4 py-2 bg-[#6366F1] text-white rounded-xl text-sm font-medium hover:bg-[#5558E6] transition-colors">
+        <h1 className="text-2xl font-bold text-[#F5F5F5]">🧹 Chores</h1>
+        <button onClick={() => setModalOpen(true)} className="px-4 py-2 bg-[#818CF8] text-white rounded-xl text-sm font-medium hover:bg-[#6366F1] transition-colors">
           + Add Chore
         </button>
       </div>
 
-      {/* Today's Chores */}
       <div>
-        <h2 className="font-semibold text-[#292524] mb-3">Today&apos;s Chores</h2>
+        <h2 className="font-semibold text-[#F5F5F5] mb-3">Today&apos;s Chores</h2>
         <div className="space-y-2">
           {todayChores.length > 0 ? todayChores.map(c => <ChoreItem key={c.id} chore={c} />) : (
-            <p className="text-sm text-[#A8A29E]">All done for today! 🎉</p>
+            <p className="text-sm text-[#A3A3A3]">All done for today! 🎉</p>
           )}
         </div>
       </div>
 
-      {/* Weekly Chores */}
       {weeklyChores.length > 0 && (
         <div>
-          <h2 className="font-semibold text-[#292524] mb-3">Weekly</h2>
+          <h2 className="font-semibold text-[#F5F5F5] mb-3">Weekly</h2>
           <div className="space-y-2">
             {weeklyChores.map(c => <ChoreItem key={c.id} chore={c} />)}
           </div>
         </div>
       )}
 
-      {/* Completed Today */}
       {completedToday.length > 0 && (
         <div>
-          <h2 className="font-semibold text-[#A8A29E] mb-3">Completed Today ✅</h2>
+          <h2 className="font-semibold text-[#A3A3A3] mb-3">Completed Today ✅</h2>
           <div className="space-y-2">
             {completedToday.map(c => <ChoreItem key={c.id} chore={c} />)}
           </div>
@@ -118,17 +125,17 @@ export default function ChoresPage() {
 
       <Modal open={modalOpen} onClose={() => setModalOpen(false)} title="Add Chore">
         <div className="space-y-3">
-          <input value={form.title} onChange={e => setForm({ ...form, title: e.target.value })} placeholder="What needs to be done?" className="w-full px-4 py-2 rounded-xl border border-[#E7E5E4] text-sm focus:outline-none focus:ring-2 focus:ring-[#6366F1]/30 focus:border-[#6366F1]" />
-          <select value={form.assigned_to} onChange={e => setForm({ ...form, assigned_to: e.target.value })} className="w-full px-4 py-2 rounded-xl border border-[#E7E5E4] text-sm focus:outline-none focus:ring-2 focus:ring-[#6366F1]/30 focus:border-[#6366F1]">
+          <input value={form.title} onChange={e => setForm({ ...form, title: e.target.value })} placeholder="What needs to be done?" className="w-full px-4 py-2.5 glass-input text-sm" />
+          <select value={form.assigned_to} onChange={e => setForm({ ...form, assigned_to: e.target.value })} className="w-full px-4 py-2.5 glass-input text-sm">
             <option value="">Assign to...</option>
             {members.map(m => <option key={m.id} value={m.name}>{m.name}</option>)}
           </select>
-          <select value={form.frequency} onChange={e => setForm({ ...form, frequency: e.target.value })} className="w-full px-4 py-2 rounded-xl border border-[#E7E5E4] text-sm focus:outline-none focus:ring-2 focus:ring-[#6366F1]/30 focus:border-[#6366F1]">
+          <select value={form.frequency} onChange={e => setForm({ ...form, frequency: e.target.value })} className="w-full px-4 py-2.5 glass-input text-sm">
             <option value="daily">Daily</option>
             <option value="weekly">Weekly</option>
             <option value="one-time">One-time</option>
           </select>
-          <button onClick={handleAdd} disabled={!form.title.trim()} className="w-full py-2 bg-[#6366F1] text-white rounded-xl font-medium hover:bg-[#5558E6] disabled:opacity-50 transition-colors">
+          <button onClick={handleAdd} disabled={!form.title.trim()} className="w-full py-2.5 bg-[#818CF8] text-white rounded-xl font-medium hover:bg-[#6366F1] disabled:opacity-50 transition-colors">
             Add Chore
           </button>
         </div>
