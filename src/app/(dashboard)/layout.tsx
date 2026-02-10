@@ -1,6 +1,6 @@
 "use client";
 
-import { useUser, UserButton } from "@clerk/nextjs";
+import { useUser } from "@clerk/nextjs";
 import Sidebar from "@/components/Sidebar";
 import MarvinPanel from "@/components/MarvinPanel";
 import { useEffect, useState, createContext, useContext, ReactNode } from "react";
@@ -59,27 +59,14 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
 
         {/* Content */}
         <div className="relative z-10 min-h-screen flex w-full">
-          <Sidebar />
-          <div className="flex-1 flex flex-col min-w-0">
-            <header className="glass-header px-6 py-3 flex items-center justify-between shrink-0">
-              <div className="ml-12 md:ml-0">
-                <h2 className="font-semibold text-[#F5F5F5]">{family?.name || "Marvin Family Hub"}</h2>
-              </div>
-              <UserButton afterSignOutUrl="/" />
-            </header>
+          <Sidebar onMarvinOpen={() => setPanelOpen(true)} />
+
+          {/* Main content: offset for rail on desktop, padding-bottom for tab bar on mobile */}
+          <div className="flex-1 flex flex-col min-w-0 md:ml-16 pb-20 md:pb-0">
             <main className="flex-1 p-4 md:p-6 overflow-y-auto">
               {children}
             </main>
           </div>
-
-          {/* Floating Marvin Button */}
-          <button
-            onClick={() => setPanelOpen(true)}
-            className="fixed bottom-6 right-6 z-40 w-14 h-14 rounded-full bg-[#818CF8] text-white text-2xl flex items-center justify-center shadow-lg shadow-indigo-500/25 hover:bg-[#6366F1] transition-colors hover:scale-105 active:scale-95"
-            aria-label="Open Marvin"
-          >
-            🤖
-          </button>
 
           {/* Marvin Slide-out Panel */}
           <MarvinPanel open={panelOpen} onClose={() => setPanelOpen(false)} />
