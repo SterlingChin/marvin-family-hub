@@ -59,8 +59,8 @@ export default function SetupWizard() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-4 bg-[#0F0F0F]">
-      <div className="glass-card p-8 w-full max-w-md bg-[#1A1A1A]/80">
+    <div className="min-h-screen flex items-center justify-center p-4">
+      <div className="glass-card p-8 w-full max-w-md">
         {/* Progress dots */}
         <div className="flex justify-center gap-2 mb-6">
           {[0, 1, 2, 3, 4].map((s) => (

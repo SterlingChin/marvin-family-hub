@@ -81,9 +81,10 @@ export default function MarvinPanel({ open, onClose }: Props) {
 
       {/* Panel */}
       <div
-        className={`fixed top-0 right-0 h-full w-full max-w-md bg-[#0A0A0A] border-l border-white/10 z-50 flex flex-col transition-transform duration-300 ${
+        className={`fixed top-0 right-0 h-full w-full max-w-md z-50 flex flex-col transition-transform duration-300 border-l border-white/10 ${
           open ? "translate-x-0" : "translate-x-full"
         }`}
+        style={{ background: 'rgba(0,0,0,0.6)', backdropFilter: 'blur(40px)', WebkitBackdropFilter: 'blur(40px)' }}
       >
         {/* Header */}
         <div className="p-4 border-b border-white/5 flex items-center justify-between shrink-0">

@@ -59,7 +59,7 @@ export default function MarvinInput({ onResponse }: Props) {
   return (
     <div className="space-y-4">
       {/* Input bar */}
-      <div className="glass-card p-2 flex gap-2">
+      <div className="p-2 flex gap-2" style={{ background: 'rgba(255,255,255,0.15)', backdropFilter: 'blur(40px)', WebkitBackdropFilter: 'blur(40px)', border: '1px solid rgba(255,255,255,0.2)', borderRadius: '1rem' }}>
         <input
           type="text"
           value={query}

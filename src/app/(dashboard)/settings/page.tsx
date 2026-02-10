@@ -94,6 +94,32 @@ export default function SettingsPage() {
           </button>
         </div>
       </div>
+      {/* Background */}
+      <div className="glass-card p-6 space-y-4">
+        <div>
+          <h2 className="font-semibold text-[#F5F5F5]">Background</h2>
+          <p className="text-sm text-[#A3A3A3] mt-1">Choose your dashboard background image.</p>
+        </div>
+        <div className="grid grid-cols-2 gap-3">
+          <div className="relative rounded-xl overflow-hidden border-2 border-[#818CF8] aspect-video">
+            <img src="https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=400&q=60" alt="Mountains" className="w-full h-full object-cover" />
+            <div className="absolute bottom-0 inset-x-0 bg-black/60 px-2 py-1 text-xs text-white text-center">Mountains (Active)</div>
+          </div>
+          <div className="relative rounded-xl overflow-hidden border border-white/10 aspect-video opacity-50">
+            <img src="https://images.unsplash.com/photo-1448375240586-882707db888b?w=400&q=60" alt="Forest" className="w-full h-full object-cover" />
+            <div className="absolute bottom-0 inset-x-0 bg-black/60 px-2 py-1 text-xs text-white text-center">Dark Forest</div>
+          </div>
+          <div className="relative rounded-xl overflow-hidden border border-white/10 aspect-video opacity-50">
+            <img src="https://images.unsplash.com/photo-1558618666-fcd25c85f82e?w=400&q=60" alt="Cozy" className="w-full h-full object-cover" />
+            <div className="absolute bottom-0 inset-x-0 bg-black/60 px-2 py-1 text-xs text-white text-center">Cozy Evening</div>
+          </div>
+          <div className="relative rounded-xl overflow-hidden border border-white/10 aspect-video opacity-50">
+            <img src="https://images.unsplash.com/photo-1475274047050-1d0c55b0033a?w=400&q=60" alt="Night Sky" className="w-full h-full object-cover" />
+            <div className="absolute bottom-0 inset-x-0 bg-black/60 px-2 py-1 text-xs text-white text-center">Night Sky</div>
+          </div>
+        </div>
+        <p className="text-xs text-[#A3A3A3]">🔮 More backgrounds coming soon.</p>
+      </div>
     </div>
   );
 }

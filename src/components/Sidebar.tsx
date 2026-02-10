@@ -20,7 +20,7 @@ export default function Sidebar() {
     <>
       {/* Mobile hamburger */}
       <button
-        className="md:hidden fixed top-4 left-4 z-50 bg-[#1A1A1A] border border-white/10 rounded-xl p-2 text-2xl text-white/70"
+        className="md:hidden fixed top-4 left-4 z-50 bg-black/40 backdrop-blur-xl border border-white/10 rounded-xl p-2 text-2xl text-white/70"
         onClick={() => setOpen(!open)}
         aria-label="Toggle menu"
       >
@@ -37,7 +37,7 @@ export default function Sidebar() {
 
       {/* Sidebar */}
       <aside
-        className={`fixed md:static z-40 top-0 left-0 h-full w-64 bg-[#0A0A0A] border-r border-white/5 flex flex-col transition-transform duration-200 ${
+        className={`fixed md:static z-40 top-0 left-0 h-full w-64 glass-sidebar flex flex-col transition-transform duration-200 ${
           open ? "translate-x-0" : "-translate-x-full md:translate-x-0"
         }`}
       >
