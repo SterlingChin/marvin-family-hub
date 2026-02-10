@@ -49,7 +49,7 @@ export default function SettingsPage() {
   };
 
   return (
-    <div className="max-w-2xl mx-auto space-y-8">
+    <div className="max-w-2xl mx-auto space-y-8 animate-fade-in-up">
       <h1 className="text-2xl font-bold text-[#F5F5F5]">Settings</h1>
 
       {/* Family Name */}

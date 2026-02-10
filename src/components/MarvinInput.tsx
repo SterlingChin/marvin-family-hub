@@ -11,6 +11,7 @@ export default function MarvinInput({ onResponse }: Props) {
   const [response, setResponse] = useState("");
   const [loading, setLoading] = useState(false);
   const [visible, setVisible] = useState(false);
+  const [dismissing, setDismissing] = useState(false);
 
   const handleAsk = async () => {
     const q = query.trim();
@@ -47,7 +48,7 @@ export default function MarvinInput({ onResponse }: Props) {
       onResponse?.(msg);
 
       // Auto-dismiss after 30s
-      setTimeout(() => setVisible(false), 30000);
+      setTimeout(() => { setDismissing(true); setTimeout(() => { setVisible(false); setDismissing(false); }, 300); }, 30000);
     } catch {
       setResponse("Couldn't reach Marvin right now.");
       setVisible(true);
@@ -84,13 +85,13 @@ export default function MarvinInput({ onResponse }: Props) {
 
       {/* Response card */}
       {visible && response && (
-        <div className="glass-card p-4 border-l-2 border-l-[#818CF8] animate-fade-in-up">
+        <div className={`glass-card p-4 border-l-2 border-l-[#818CF8] ${dismissing ? "animate-fade-in" : "animate-bounce-in"}`} style={dismissing ? { opacity: 0, transition: "opacity 0.3s ease-out" } : undefined}>
           <div className="flex items-start gap-3">
             <span className="text-lg shrink-0">🤖</span>
             <p className="text-sm text-[#F5F5F5] leading-relaxed flex-1 whitespace-pre-wrap">{response}</p>
             <button
-              onClick={() => setVisible(false)}
-              className="text-[#A3A3A3] hover:text-white text-xs shrink-0"
+              onClick={() => { setDismissing(true); setTimeout(() => { setVisible(false); setDismissing(false); }, 300); }}
+              className="text-[#A3A3A3] hover:text-white text-xs shrink-0 touch-target flex items-center justify-center"
             >
               ✕
             </button>

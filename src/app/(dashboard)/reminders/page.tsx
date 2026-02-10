@@ -42,10 +42,10 @@ export default function RemindersPage() {
   };
 
   return (
-    <div className="max-w-3xl mx-auto space-y-6">
+    <div className="max-w-3xl mx-auto space-y-6 animate-fade-in-up">
       <div className="flex items-center justify-between">
         <h1 className="text-2xl font-bold text-[#F5F5F5]">Reminders</h1>
-        <button onClick={() => setModalOpen(true)} className="px-4 py-2 bg-[#818CF8] text-white rounded-xl text-sm font-medium hover:bg-[#6366F1] transition-colors">
+        <button onClick={() => setModalOpen(true)} className="px-4 py-2 bg-[#818CF8] text-white rounded-xl text-sm font-medium hover:bg-[#6366F1] transition-colors press-scale touch-target">
           + Add Reminder
         </button>
       </div>
@@ -53,7 +53,7 @@ export default function RemindersPage() {
       <div>
         <h2 className="font-semibold text-[#F5F5F5] mb-3">Upcoming</h2>
         <div className="space-y-2">
-          {upcoming.length > 0 ? upcoming.map(r => <ReminderItem key={r.id} reminder={r} onToggle={handleToggle} onDelete={handleDelete} />)
+          {upcoming.length > 0 ? upcoming.map((r, i) => <div key={r.id} className={`stagger-item animate-fade-in-up stagger-${Math.min(i + 1, 8)}`}><ReminderItem reminder={r} onToggle={handleToggle} onDelete={handleDelete} /></div>)
             : <p className="text-sm text-[#A3A3A3]">No upcoming reminders.</p>}
         </div>
       </div>
@@ -62,7 +62,7 @@ export default function RemindersPage() {
         <div>
           <h2 className="font-semibold text-[#A3A3A3] mb-3">Completed</h2>
           <div className="space-y-2">
-            {completed.map(r => <ReminderItem key={r.id} reminder={r} onToggle={handleToggle} onDelete={handleDelete} />)}
+            {completed.map((r, i) => <div key={r.id} className={`stagger-item animate-fade-in-up stagger-${Math.min(i + 1, 8)}`}><ReminderItem reminder={r} onToggle={handleToggle} onDelete={handleDelete} /></div>)}
           </div>
         </div>
       )}

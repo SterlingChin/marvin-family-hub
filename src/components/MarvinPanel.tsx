@@ -104,8 +104,8 @@ export default function MarvinPanel({ open, onClose }: Props) {
               <p>schedules, meals, or anything else.</p>
             </div>
           )}
-          {messages.map((m) => (
-            <div key={m.id} className={`flex gap-2 ${m.role === "user" ? "justify-end" : "justify-start"}`}>
+          {messages.map((m, i) => (
+            <div key={m.id} className={`flex gap-2 animate-fade-in-up ${m.role === "user" ? "justify-end" : "justify-start"}`} style={{ animationDelay: `${Math.min(i * 60, 420)}ms` }}>
               {m.role === "assistant" && (
                 <div className="w-7 h-7 rounded-full bg-[#818CF8]/20 flex items-center justify-center text-sm shrink-0">
                   🤖
@@ -128,10 +128,10 @@ export default function MarvinPanel({ open, onClose }: Props) {
                 🤖
               </div>
               <div className="glass-card px-4 py-2.5 rounded-2xl rounded-bl-md">
-                <div className="flex gap-1">
-                  <span className="w-2 h-2 bg-[#A3A3A3] rounded-full animate-bounce" style={{ animationDelay: "0ms" }} />
-                  <span className="w-2 h-2 bg-[#A3A3A3] rounded-full animate-bounce" style={{ animationDelay: "150ms" }} />
-                  <span className="w-2 h-2 bg-[#A3A3A3] rounded-full animate-bounce" style={{ animationDelay: "300ms" }} />
+                <div className="flex gap-1.5">
+                  <span className="w-2 h-2 bg-[#A3A3A3] rounded-full animate-pulse" style={{ animationDelay: "0ms", animationDuration: "1s" }} />
+                  <span className="w-2 h-2 bg-[#A3A3A3] rounded-full animate-pulse" style={{ animationDelay: "200ms", animationDuration: "1s" }} />
+                  <span className="w-2 h-2 bg-[#A3A3A3] rounded-full animate-pulse" style={{ animationDelay: "400ms", animationDuration: "1s" }} />
                 </div>
               </div>
             </div>

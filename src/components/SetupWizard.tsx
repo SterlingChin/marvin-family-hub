@@ -74,7 +74,7 @@ export default function SetupWizard() {
         </div>
 
         {step === 0 && (
-          <div className="text-center space-y-4">
+          <div className="text-center space-y-4 animate-bounce-in">
             <div className="text-6xl mb-2">🤖</div>
             <h1 className="text-2xl font-bold text-[#F5F5F5]">Hi there! I&apos;m Marvin.</h1>
             <p className="text-[#A3A3A3] leading-relaxed">
@@ -87,7 +87,7 @@ export default function SetupWizard() {
             </div>
             <button
               onClick={() => setStep(1)}
-              className="w-full py-3 bg-[#818CF8] text-white rounded-xl font-medium hover:bg-[#6366F1] transition-colors"
+              className="w-full py-3 bg-[#818CF8] text-white rounded-xl font-medium hover:bg-[#6366F1] transition-colors press-scale"
             >
               Nice to meet you! Let&apos;s go →
             </button>
@@ -95,7 +95,7 @@ export default function SetupWizard() {
         )}
 
         {step === 1 && (
-          <div className="space-y-4">
+          <div className="space-y-4 animate-bounce-in">
             <div className="text-center mb-2">
               <div className="text-3xl mb-2">👨‍👩‍👧‍👦</div>
               <h2 className="text-xl font-bold text-[#F5F5F5]">What should I call your family?</h2>
@@ -124,7 +124,7 @@ export default function SetupWizard() {
         )}
 
         {step === 2 && (
-          <div className="space-y-4">
+          <div className="space-y-4 animate-bounce-in">
             <div className="text-center mb-2">
               <div className="text-3xl mb-2">✨</div>
               <h2 className="text-xl font-bold text-[#F5F5F5]">Who&apos;s in the family?</h2>
@@ -180,7 +180,7 @@ export default function SetupWizard() {
         )}
 
         {step === 3 && (
-          <div className="space-y-4">
+          <div className="space-y-4 animate-bounce-in">
             <div className="text-center mb-2">
               <h2 className="text-xl font-bold text-[#F5F5F5]">
                 Pick an avatar for {validMembers[avatarStep]?.name || "member"}
@@ -222,7 +222,7 @@ export default function SetupWizard() {
         )}
 
         {step === 4 && (
-          <div className="text-center space-y-4">
+          <div className="text-center space-y-4 animate-bounce-in">
             <div className="text-5xl mb-2">🎉</div>
             <h2 className="text-xl font-bold text-[#F5F5F5]">You&apos;re all set, {familyName}!</h2>
             <p className="text-[#A3A3A3]">Here&apos;s your family:</p>

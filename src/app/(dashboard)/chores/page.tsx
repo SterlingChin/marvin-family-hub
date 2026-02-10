@@ -60,15 +60,15 @@ export default function ChoresPage() {
     return m?.avatar || "👤";
   };
 
-  const ChoreItem = ({ chore }: { chore: Chore }) => (
-    <div className={`flex items-center gap-3 p-3 rounded-xl border transition-colors ${
+  const ChoreItem = ({ chore, staggerClass }: { chore: Chore; staggerClass?: string }) => (
+    <div className={`flex items-center gap-3 p-3 rounded-xl border transition-colors press-scale ${
       chore.completed ? "bg-white/5 border-white/5 opacity-60" : "glass-card hover:bg-white/10"
-    }`}>
+    } ${staggerClass || ""}`}>
       <input
         type="checkbox"
         checked={chore.completed}
         onChange={() => toggleChore(chore.id, !chore.completed)}
-        className="w-5 h-5 rounded-md accent-[#818CF8] shrink-0"
+        className="w-5 h-5 rounded-md accent-[#818CF8] shrink-0 touch-target"
       />
       {chore.assigned_to && (
         <span className="text-lg shrink-0">{getMemberAvatar(chore.assigned_to)}</span>
@@ -88,10 +88,10 @@ export default function ChoresPage() {
   );
 
   return (
-    <div className="max-w-3xl mx-auto space-y-6">
+    <div className="max-w-3xl mx-auto space-y-6 animate-fade-in-up">
       <div className="flex items-center justify-between">
         <h1 className="text-2xl font-bold text-[#F5F5F5]">Chores</h1>
-        <button onClick={() => setModalOpen(true)} className="px-4 py-2 bg-[#818CF8] text-white rounded-xl text-sm font-medium hover:bg-[#6366F1] transition-colors">
+        <button onClick={() => setModalOpen(true)} className="px-4 py-2 bg-[#818CF8] text-white rounded-xl text-sm font-medium hover:bg-[#6366F1] transition-colors press-scale touch-target">
           + Add Chore
         </button>
       </div>
@@ -99,7 +99,7 @@ export default function ChoresPage() {
       <div>
         <h2 className="font-semibold text-[#F5F5F5] mb-3">Today&apos;s Chores</h2>
         <div className="space-y-2">
-          {todayChores.length > 0 ? todayChores.map(c => <ChoreItem key={c.id} chore={c} />) : (
+          {todayChores.length > 0 ? todayChores.map((c, i) => <ChoreItem key={c.id} chore={c} staggerClass={`stagger-item animate-fade-in-up stagger-${Math.min(i + 1, 8)}`} />) : (
             <p className="text-sm text-[#A3A3A3]">All done for today.</p>
           )}
         </div>
@@ -109,7 +109,7 @@ export default function ChoresPage() {
         <div>
           <h2 className="font-semibold text-[#F5F5F5] mb-3">Weekly</h2>
           <div className="space-y-2">
-            {weeklyChores.map(c => <ChoreItem key={c.id} chore={c} />)}
+            {weeklyChores.map((c, i) => <ChoreItem key={c.id} chore={c} staggerClass={`stagger-item animate-fade-in-up stagger-${Math.min(i + 1, 8)}`} />)}
           </div>
         </div>
       )}
@@ -118,7 +118,7 @@ export default function ChoresPage() {
         <div>
           <h2 className="font-semibold text-[#A3A3A3] mb-3">Completed Today</h2>
           <div className="space-y-2">
-            {completedToday.map(c => <ChoreItem key={c.id} chore={c} />)}
+            {completedToday.map((c, i) => <ChoreItem key={c.id} chore={c} staggerClass={`stagger-item animate-fade-in-up stagger-${Math.min(i + 1, 8)}`} />)}
           </div>
         </div>
       )}

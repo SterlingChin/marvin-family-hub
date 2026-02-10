@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { useFamily } from "../layout";
 import MarvinInput from "@/components/MarvinInput";
@@ -27,6 +27,13 @@ interface FeedItem {
   isPast?: boolean;
 }
 
+const PROACTIVE_MESSAGES = [
+  "No events tomorrow — good day to catch up on things.",
+  "Taylor's science project is due Thursday.",
+  "The weather looks clear for a family walk this evening.",
+  "Everyone's chores are on track this week. Nice job! 🎉",
+];
+
 function getGreeting() {
   const h = new Date().getHours();
   if (h < 12) return "Good morning";
@@ -50,6 +57,22 @@ export default function DashboardPage() {
   const [choreModalOpen, setChoreModalOpen] = useState(false);
   const [reminderForm, setReminderForm] = useState({ title: "", due_date: "", assigned_to: "" });
   const [choreForm, setChoreForm] = useState({ title: "", assigned_to: "", frequency: "daily" });
+  const [shrinkingIds, setShrinkingIds] = useState<Set<string>>(new Set());
+  const [proactiveIdx, setProactiveIdx] = useState(0);
+  const [proactiveFading, setProactiveFading] = useState(false);
+  const [contentKey, setContentKey] = useState(0);
+
+  // Rotate proactive messages
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setProactiveFading(true);
+      setTimeout(() => {
+        setProactiveIdx(prev => (prev + 1) % PROACTIVE_MESSAGES.length);
+        setProactiveFading(false);
+      }, 300);
+    }, 8000);
+    return () => clearInterval(interval);
+  }, []);
 
   useEffect(() => {
     if (!loading && !family) router.push("/setup");
@@ -65,13 +88,31 @@ export default function DashboardPage() {
   useEffect(() => { fetchData(); }, [fetchData]);
 
   const toggleChore = async (id: string) => {
-    setChores(prev => prev.filter(c => c.id !== id));
+    setShrinkingIds(prev => new Set(prev).add(id));
     await fetch(`/api/chores/${id}`, { method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ completed: true }) }).catch(() => {});
+    setTimeout(() => {
+      setChores(prev => prev.filter(c => c.id !== id));
+      setShrinkingIds(prev => { const s = new Set(prev); s.delete(id); return s; });
+    }, 300);
   };
 
   const toggleReminder = async (id: string, completed: boolean) => {
-    setReminders(prev => prev.map(r => r.id === id ? { ...r, completed } : r));
-    await fetch(`/api/reminders/${id}`, { method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ completed }) }).catch(() => {});
+    if (completed) {
+      setShrinkingIds(prev => new Set(prev).add(id));
+      await fetch(`/api/reminders/${id}`, { method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ completed }) }).catch(() => {});
+      setTimeout(() => {
+        setReminders(prev => prev.filter(r => r.id !== id));
+        setShrinkingIds(prev => { const s = new Set(prev); s.delete(id); return s; });
+      }, 300);
+    } else {
+      setReminders(prev => prev.map(r => r.id === id ? { ...r, completed } : r));
+      await fetch(`/api/reminders/${id}`, { method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ completed }) }).catch(() => {});
+    }
+  };
+
+  const handleSelectMember = (id: string | null) => {
+    setSelectedMember(id);
+    setContentKey(prev => prev + 1);
   };
 
   const handleAddReminder = async () => {
@@ -99,7 +140,6 @@ export default function DashboardPage() {
     return (m as FamilyMember & { avatar?: string })?.avatar || "👤";
   };
 
-  // Build unified feed
   const feedItems: FeedItem[] = [
     ...filteredChores.map(c => ({
       id: c.id,
@@ -123,7 +163,6 @@ export default function DashboardPage() {
       };
     }),
   ].sort((a, b) => {
-    // Items with times first, sorted by time
     if (a.time && b.time) return a.time.getTime() - b.time.getTime();
     if (a.time) return -1;
     if (b.time) return 1;
@@ -135,11 +174,11 @@ export default function DashboardPage() {
       {/* Greeting */}
       {selectedMember && selectedMemberData ? (
         <div className="pt-6 pb-4 animate-fade-in">
-          <button onClick={() => setSelectedMember(null)} className="text-sm text-[#818CF8] hover:text-[#A5B4FC] mb-3 flex items-center gap-1">
+          <button onClick={() => handleSelectMember(null)} className="text-sm text-[#818CF8] hover:text-[#A5B4FC] mb-3 flex items-center gap-1 press-scale touch-target">
             ← Back
           </button>
           <div className="flex items-center gap-4">
-            <div className="w-14 h-14 rounded-full bg-white/10 flex items-center justify-center text-2xl glow-ring">
+            <div className="w-14 h-14 rounded-full bg-white/10 flex items-center justify-center text-2xl glow-ring transition-transform duration-300 scale-110">
               {(selectedMemberData as FamilyMember & { avatar?: string }).avatar || "👤"}
             </div>
             <div>
@@ -149,7 +188,7 @@ export default function DashboardPage() {
           </div>
         </div>
       ) : (
-        <div className="flex items-center justify-between pt-6 pb-4">
+        <div className="flex items-center justify-between pt-6 pb-4 animate-fade-in">
           <p className="text-sm text-[#A3A3A3]">{getGreeting()}.</p>
           <p className="text-sm text-[#A3A3A3]">{formatDate()}</p>
         </div>
@@ -157,24 +196,24 @@ export default function DashboardPage() {
 
       {/* Family Members Row */}
       {!selectedMember && members.length > 0 && (
-        <div className="flex gap-4 overflow-x-auto pb-4">
+        <div className="flex gap-4 overflow-x-auto pb-4 swipeable">
           <button
-            onClick={() => setSelectedMember(null)}
-            className="flex flex-col items-center gap-1.5 shrink-0"
+            onClick={() => handleSelectMember(null)}
+            className="flex flex-col items-center gap-1.5 shrink-0 stagger-item animate-bounce-in stagger-1"
           >
             <div className="w-12 h-12 rounded-full bg-white/10 border-2 border-[#818CF8] flex items-center justify-center text-xs font-medium text-[#818CF8]">
               All
             </div>
             <span className="text-xs text-[#A3A3A3]">Everyone</span>
           </button>
-          {members.map((m) => (
+          {members.map((m, i) => (
             <button
               key={m.id}
-              onClick={() => setSelectedMember(m.id)}
-              className="flex flex-col items-center gap-1.5 shrink-0 group"
+              onClick={() => handleSelectMember(m.id)}
+              className={`flex flex-col items-center gap-1.5 shrink-0 group stagger-item animate-bounce-in stagger-${Math.min(i + 2, 8)}`}
             >
               <div className={`w-12 h-12 rounded-full bg-white/10 flex items-center justify-center text-xl transition-all ${
-                selectedMember === m.id ? "glow-ring border-2 border-[#818CF8]" : "border border-white/10 group-hover:border-white/20"
+                selectedMember === m.id ? "glow-ring border-2 border-[#818CF8] scale-110" : "border border-white/10 group-hover:border-white/20"
               }`}>
                 {(m as FamilyMember & { avatar?: string }).avatar || m.name.charAt(0).toUpperCase()}
               </div>
@@ -184,44 +223,71 @@ export default function DashboardPage() {
         </div>
       )}
 
-      {/* Unified Today Feed */}
-      <div className="flex-1 pb-4">
-        <div className="glass-card p-2 glow-card">
-          {feedItems.length > 0 ? feedItems.map((item, i) => (
-            <div
-              key={item.id}
-              className={`flex items-center gap-3 px-4 py-3 transition-colors hover:bg-white/5 rounded-lg ${
-                item.isPast ? "bg-[#FB923C]/5" : ""
-              } ${i < feedItems.length - 1 ? "border-b border-white/5" : ""}`}
-            >
-              <input
-                type="checkbox"
-                checked={item.completed}
-                onChange={() => item.type === "chore" ? toggleChore(item.id) : toggleReminder(item.id, !item.completed)}
-                className="w-4 h-4 rounded accent-[#818CF8] shrink-0"
-              />
-              <p className="flex-1 text-sm text-[#F5F5F5]">{item.title}</p>
-              {item.assigned_to && !selectedMember && (
-                <span className="text-sm shrink-0">{getMemberAvatar(item.assigned_to)}</span>
-              )}
-              {item.time && (
-                <span className={`text-xs shrink-0 ${item.isPast ? "text-[#FB923C]" : "text-[#A3A3A3]"}`}>
-                  {item.time.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
-                </span>
-              )}
+      {/* Two-column grid */}
+      <div key={contentKey} className="flex-1 pb-4 grid grid-cols-1 lg:grid-cols-2 gap-4">
+        {/* Left: Today's items */}
+        <div className="stagger-item animate-fade-in-up stagger-3">
+          <div className="glass-card p-2 glow-card">
+            <div className="px-4 py-2 flex items-center justify-between">
+              <h3 className="text-sm font-semibold text-[#A3A3A3]">Today</h3>
+              <span className="text-xs text-[#A3A3A3]">{feedItems.length} items</span>
             </div>
-          )) : (
-            <p className="text-sm text-[#A3A3A3] py-8 text-center">Nothing for today.</p>
-          )}
+            {feedItems.length > 0 ? feedItems.map((item, i) => (
+              <div
+                key={item.id}
+                className={`flex items-center gap-3 px-4 py-3 transition-colors hover:bg-white/5 rounded-lg press-scale ${
+                  item.isPast ? "bg-[#FB923C]/5" : ""
+                } ${i < feedItems.length - 1 ? "border-b border-white/5" : ""} ${
+                  shrinkingIds.has(item.id) ? "animate-shrink-out" : ""
+                }`}
+              >
+                <input
+                  type="checkbox"
+                  checked={item.completed}
+                  onChange={() => item.type === "chore" ? toggleChore(item.id) : toggleReminder(item.id, !item.completed)}
+                  className="w-5 h-5 rounded accent-[#818CF8] shrink-0 touch-target"
+                />
+                <p className="flex-1 text-sm text-[#F5F5F5]">{item.title}</p>
+                {item.assigned_to && !selectedMember && (
+                  <span className="text-sm shrink-0">{getMemberAvatar(item.assigned_to)}</span>
+                )}
+                {item.time && (
+                  <span className={`text-xs shrink-0 ${item.isPast ? "text-[#FB923C]" : "text-[#A3A3A3]"}`}>
+                    {item.time.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
+                  </span>
+                )}
+              </div>
+            )) : (
+              <p className="text-sm text-[#A3A3A3] py-8 text-center">Nothing for today.</p>
+            )}
+          </div>
+        </div>
+
+        {/* Right: Marvin's proactive card + input */}
+        <div className="flex flex-col gap-4 stagger-item animate-fade-in-up stagger-5">
+          {/* Proactive insight */}
+          <div className="glass-card p-5 glow-card">
+            <div className="flex items-start gap-3">
+              <span className="text-xl shrink-0">🤖</span>
+              <div className="flex-1 min-w-0">
+                <p className="text-xs font-medium text-[#818CF8] mb-1">Marvin says</p>
+                <p
+                  className={`text-sm text-[#F5F5F5] leading-relaxed transition-opacity duration-300 ${
+                    proactiveFading ? "opacity-0" : "opacity-100"
+                  }`}
+                >
+                  {PROACTIVE_MESSAGES[proactiveIdx]}
+                </p>
+              </div>
+            </div>
+          </div>
+
+          {/* Marvin Input */}
+          <MarvinInput />
         </div>
       </div>
 
-      {/* Marvin Input - Bottom */}
-      <div className="sticky bottom-0 pb-6 pt-2">
-        <MarvinInput />
-      </div>
-
-      {/* Modals (kept but no trigger buttons on dashboard) */}
+      {/* Modals */}
       <Modal open={reminderModalOpen} onClose={() => setReminderModalOpen(false)} title="Add Reminder">
         <div className="space-y-3">
           <input value={reminderForm.title} onChange={e => setReminderForm({ ...reminderForm, title: e.target.value })} placeholder="What needs to be done?" className="w-full px-4 py-2.5 glass-input text-sm" />
@@ -230,7 +296,7 @@ export default function DashboardPage() {
             <option value="">Assign to...</option>
             {members.map(m => <option key={m.id} value={m.name}>{m.name}</option>)}
           </select>
-          <button onClick={handleAddReminder} disabled={!reminderForm.title.trim()} className="w-full py-2.5 bg-[#818CF8] text-white rounded-xl font-medium hover:bg-[#6366F1] disabled:opacity-50 transition-colors">
+          <button onClick={handleAddReminder} disabled={!reminderForm.title.trim()} className="w-full py-2.5 bg-[#818CF8] text-white rounded-xl font-medium hover:bg-[#6366F1] disabled:opacity-50 transition-colors press-scale">
             Add Reminder
           </button>
         </div>
@@ -248,7 +314,7 @@ export default function DashboardPage() {
             <option value="weekly">Weekly</option>
             <option value="one-time">One-time</option>
           </select>
-          <button onClick={handleAddChore} disabled={!choreForm.title.trim()} className="w-full py-2.5 bg-[#818CF8] text-white rounded-xl font-medium hover:bg-[#6366F1] disabled:opacity-50 transition-colors">
+          <button onClick={handleAddChore} disabled={!choreForm.title.trim()} className="w-full py-2.5 bg-[#818CF8] text-white rounded-xl font-medium hover:bg-[#6366F1] disabled:opacity-50 transition-colors press-scale">
             Add Chore
           </button>
         </div>
