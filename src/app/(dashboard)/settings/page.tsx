@@ -50,7 +50,7 @@ export default function SettingsPage() {
 
   return (
     <div className="max-w-2xl mx-auto space-y-8">
-      <h1 className="text-2xl font-bold text-[#F5F5F5]">⚙️ Settings</h1>
+      <h1 className="text-2xl font-bold text-[#F5F5F5]">Settings</h1>
 
       {/* Family Name */}
       <div className="glass-card p-6 space-y-3">
@@ -118,7 +118,7 @@ export default function SettingsPage() {
             <div className="absolute bottom-0 inset-x-0 bg-black/60 px-2 py-1 text-xs text-white text-center">Night Sky</div>
           </div>
         </div>
-        <p className="text-xs text-[#A3A3A3]">🔮 More backgrounds coming soon.</p>
+        <p className="text-xs text-[#A3A3A3]">More backgrounds coming soon.</p>
       </div>
     </div>
   );

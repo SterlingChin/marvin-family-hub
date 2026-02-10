@@ -90,7 +90,7 @@ export default function ChoresPage() {
   return (
     <div className="max-w-3xl mx-auto space-y-6">
       <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold text-[#F5F5F5]">🧹 Chores</h1>
+        <h1 className="text-2xl font-bold text-[#F5F5F5]">Chores</h1>
         <button onClick={() => setModalOpen(true)} className="px-4 py-2 bg-[#818CF8] text-white rounded-xl text-sm font-medium hover:bg-[#6366F1] transition-colors">
           + Add Chore
         </button>
@@ -100,7 +100,7 @@ export default function ChoresPage() {
         <h2 className="font-semibold text-[#F5F5F5] mb-3">Today&apos;s Chores</h2>
         <div className="space-y-2">
           {todayChores.length > 0 ? todayChores.map(c => <ChoreItem key={c.id} chore={c} />) : (
-            <p className="text-sm text-[#A3A3A3]">All done for today! 🎉</p>
+            <p className="text-sm text-[#A3A3A3]">All done for today.</p>
           )}
         </div>
       </div>
@@ -116,7 +116,7 @@ export default function ChoresPage() {
 
       {completedToday.length > 0 && (
         <div>
-          <h2 className="font-semibold text-[#A3A3A3] mb-3">Completed Today ✅</h2>
+          <h2 className="font-semibold text-[#A3A3A3] mb-3">Completed Today</h2>
           <div className="space-y-2">
             {completedToday.map(c => <ChoreItem key={c.id} chore={c} />)}
           </div>

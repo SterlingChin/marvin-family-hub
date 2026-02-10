@@ -16,6 +16,17 @@ interface Chore {
   completed: boolean;
 }
 
+interface FeedItem {
+  id: string;
+  type: "chore" | "reminder";
+  title: string;
+  assigned_to?: string;
+  completed: boolean;
+  time?: Date | null;
+  frequency?: string;
+  isPast?: boolean;
+}
+
 function getGreeting() {
   const h = new Date().getHours();
   if (h < 12) return "Good morning";
@@ -23,11 +34,10 @@ function getGreeting() {
   return "Good evening";
 }
 
-const insights = [
-  { icon: "💡", text: "No events scheduled for tomorrow — a great day to catch up!", accent: "border-l-[#818CF8]" },
-  { icon: "📋", text: "3 chores are still open from yesterday. Want me to reassign them?", accent: "border-l-[#FB923C]" },
-  { icon: "⭐", text: "Everyone completed their tasks last Friday. Great teamwork!", accent: "border-l-[#86EFAC]" },
-];
+function formatDate() {
+  const now = new Date();
+  return now.toLocaleDateString("en-US", { weekday: "long", month: "short", day: "numeric" });
+}
 
 export default function DashboardPage() {
   const router = useRouter();
@@ -89,172 +99,129 @@ export default function DashboardPage() {
     return (m as FamilyMember & { avatar?: string })?.avatar || "👤";
   };
 
+  // Build unified feed
+  const feedItems: FeedItem[] = [
+    ...filteredChores.map(c => ({
+      id: c.id,
+      type: "chore" as const,
+      title: c.title,
+      assigned_to: c.assigned_to,
+      completed: c.completed,
+      time: null,
+      frequency: c.frequency,
+    })),
+    ...filteredReminders.map(r => {
+      const due = r.due_date ? new Date(r.due_date) : null;
+      return {
+        id: r.id,
+        type: "reminder" as const,
+        title: r.title,
+        assigned_to: r.assigned_to,
+        completed: r.completed,
+        time: due,
+        isPast: due ? due < new Date() : false,
+      };
+    }),
+  ].sort((a, b) => {
+    // Items with times first, sorted by time
+    if (a.time && b.time) return a.time.getTime() - b.time.getTime();
+    if (a.time) return -1;
+    if (b.time) return 1;
+    return 0;
+  });
+
   return (
-    <div className="space-y-8 max-w-5xl mx-auto">
+    <div className="flex flex-col min-h-[calc(100vh-4rem)] px-6 lg:px-12">
       {/* Greeting */}
       {selectedMember && selectedMemberData ? (
-        <div className="animate-fade-in">
+        <div className="pt-6 pb-4 animate-fade-in">
           <button onClick={() => setSelectedMember(null)} className="text-sm text-[#818CF8] hover:text-[#A5B4FC] mb-3 flex items-center gap-1">
-            ← Back to Family
+            ← Back
           </button>
           <div className="flex items-center gap-4">
-            <div className="w-16 h-16 rounded-full bg-white/10 flex items-center justify-center text-3xl glow-ring">
+            <div className="w-14 h-14 rounded-full bg-white/10 flex items-center justify-center text-2xl glow-ring">
               {(selectedMemberData as FamilyMember & { avatar?: string }).avatar || "👤"}
             </div>
             <div>
-              <h1 className="text-2xl font-bold text-[#F5F5F5]">{selectedMemberData.name}&apos;s Day</h1>
+              <p className="text-lg text-[#F5F5F5]">{selectedMemberData.name}</p>
               <p className="text-[#A3A3A3] text-sm capitalize">{selectedMemberData.role}</p>
             </div>
           </div>
         </div>
       ) : (
-        <div>
-          <div className="flex items-center gap-2 mb-1">
-            <span className="text-sm opacity-60">🤖</span>
-            <h1 className="text-2xl font-bold text-[#F5F5F5]">
-              {getGreeting()}, {family.name}.
-            </h1>
-          </div>
-          <p className="text-[#A3A3A3] text-sm">Here&apos;s what&apos;s happening today.</p>
+        <div className="flex items-center justify-between pt-6 pb-4">
+          <p className="text-sm text-[#A3A3A3]">{getGreeting()}.</p>
+          <p className="text-sm text-[#A3A3A3]">{formatDate()}</p>
         </div>
       )}
-
-      {/* Marvin Input */}
-      {!selectedMember && <MarvinInput />}
 
       {/* Family Members Row */}
       {!selectedMember && members.length > 0 && (
-        <div>
-          <h3 className="text-xs font-medium text-[#A3A3A3] uppercase tracking-wider mb-3">Family</h3>
-          <div className="flex gap-4 overflow-x-auto pb-2">
+        <div className="flex gap-4 overflow-x-auto pb-4">
+          <button
+            onClick={() => setSelectedMember(null)}
+            className="flex flex-col items-center gap-1.5 shrink-0"
+          >
+            <div className="w-12 h-12 rounded-full bg-white/10 border-2 border-[#818CF8] flex items-center justify-center text-xs font-medium text-[#818CF8]">
+              All
+            </div>
+            <span className="text-xs text-[#A3A3A3]">Everyone</span>
+          </button>
+          {members.map((m) => (
             <button
-              onClick={() => setSelectedMember(null)}
-              className={`flex flex-col items-center gap-2 shrink-0 group`}
+              key={m.id}
+              onClick={() => setSelectedMember(m.id)}
+              className="flex flex-col items-center gap-1.5 shrink-0 group"
             >
-              <div className="w-14 h-14 rounded-full bg-white/10 border-2 border-[#818CF8] flex items-center justify-center text-sm font-medium text-[#818CF8] glow-ring">
-                All
+              <div className={`w-12 h-12 rounded-full bg-white/10 flex items-center justify-center text-xl transition-all ${
+                selectedMember === m.id ? "glow-ring border-2 border-[#818CF8]" : "border border-white/10 group-hover:border-white/20"
+              }`}>
+                {(m as FamilyMember & { avatar?: string }).avatar || m.name.charAt(0).toUpperCase()}
               </div>
-              <span className="text-xs text-[#A3A3A3]">Everyone</span>
+              <span className="text-xs text-[#A3A3A3] group-hover:text-[#F5F5F5] transition-colors">{m.name}</span>
             </button>
-            {members.map((m) => (
-              <button
-                key={m.id}
-                onClick={() => setSelectedMember(m.id)}
-                className="flex flex-col items-center gap-2 shrink-0 group"
-              >
-                <div className={`w-14 h-14 rounded-full bg-white/10 flex items-center justify-center text-2xl transition-all ${
-                  selectedMember === m.id ? "glow-ring border-2 border-[#818CF8]" : "border border-white/10 group-hover:border-white/20"
-                }`}>
-                  {(m as FamilyMember & { avatar?: string }).avatar || m.name.charAt(0).toUpperCase()}
-                </div>
-                <span className="text-xs text-[#A3A3A3] group-hover:text-[#F5F5F5] transition-colors">{m.name}</span>
-              </button>
-            ))}
-          </div>
+          ))}
         </div>
       )}
 
-      {/* Marvin's Insights */}
-      {!selectedMember && (
-        <div>
-          <h3 className="text-xs font-medium text-[#A3A3A3] uppercase tracking-wider mb-3">Marvin&apos;s Insights</h3>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-            {insights.map((insight, i) => (
-              <div key={i} className={`glass-card p-4 border-l-2 ${insight.accent} animate-fade-in-up`} style={{ animationDelay: `${i * 100}ms` }}>
-                <div className="flex items-start gap-3">
-                  <span className="text-lg">{insight.icon}</span>
-                  <p className="text-sm text-[#A3A3A3] leading-relaxed">{insight.text}</p>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
-
-      {/* Main Content Grid */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Chores */}
-        <div className="glass-card p-5 glow-card">
-          <div className="flex items-center justify-between mb-4">
-            <h3 className="font-semibold text-[#F5F5F5] flex items-center gap-2">
-              🧹 {selectedMember ? `${selectedMemberData?.name}'s Chores` : "Today's Chores"}
-            </h3>
-            <a href="/chores" className="text-xs text-[#818CF8] hover:text-[#A5B4FC]">View all →</a>
-          </div>
-          <div className="space-y-2">
-            {filteredChores.length > 0 ? filteredChores.map(c => (
-              <div key={c.id} className="flex items-center gap-3 p-3 rounded-xl bg-white/5 border border-white/5 hover:bg-white/10 transition-colors group">
-                <input
-                  type="checkbox"
-                  onChange={() => toggleChore(c.id)}
-                  className="w-5 h-5 rounded-md accent-[#818CF8] shrink-0"
-                />
-                <div className="flex-1 min-w-0">
-                  <p className="font-medium text-sm text-[#F5F5F5]">{c.title}</p>
-                  {c.assigned_to && !selectedMember && (
-                    <p className="text-xs text-[#A3A3A3]">{getMemberAvatar(c.assigned_to)} {c.assigned_to}</p>
-                  )}
-                </div>
-                <span className="text-xs text-[#A3A3A3] capitalize opacity-0 group-hover:opacity-100 transition-opacity">{c.frequency}</span>
-              </div>
-            )) : (
-              <p className="text-sm text-[#A3A3A3] py-4 text-center">All done! 🎉</p>
-            )}
-          </div>
-        </div>
-
-        {/* Reminders */}
-        <div className="glass-card p-5 glow-card">
-          <div className="flex items-center justify-between mb-4">
-            <h3 className="font-semibold text-[#F5F5F5] flex items-center gap-2">
-              ⏰ {selectedMember ? `${selectedMemberData?.name}'s Reminders` : "Upcoming Reminders"}
-            </h3>
-            <a href="/reminders" className="text-xs text-[#818CF8] hover:text-[#A5B4FC]">View all →</a>
-          </div>
-          <div className="space-y-2">
-            {filteredReminders.length > 0 ? filteredReminders.map(r => {
-              const due = r.due_date ? new Date(r.due_date) : null;
-              const isPast = due && due < new Date();
-              return (
-                <div key={r.id} className={`flex items-center gap-3 p-3 rounded-xl border transition-colors ${
-                  isPast ? "bg-[#FB923C]/10 border-[#FB923C]/20" : "bg-white/5 border-white/5 hover:bg-white/10"
-                }`}>
-                  <input
-                    type="checkbox"
-                    checked={r.completed}
-                    onChange={() => toggleReminder(r.id, !r.completed)}
-                    className="w-5 h-5 rounded-md accent-[#818CF8] shrink-0"
-                  />
-                  <div className="flex-1 min-w-0">
-                    <p className="font-medium text-sm text-[#F5F5F5]">{r.title}</p>
-                    <p className="text-xs text-[#A3A3A3]">
-                      {due ? `${due.toLocaleDateString()} ${due.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}` : "No date"}
-                      {r.assigned_to && !selectedMember && ` · ${getMemberAvatar(r.assigned_to)} ${r.assigned_to}`}
-                    </p>
-                  </div>
-                </div>
-              );
-            }) : (
-              <p className="text-sm text-[#A3A3A3] py-4 text-center">No upcoming reminders 🎉</p>
-            )}
-          </div>
+      {/* Unified Today Feed */}
+      <div className="flex-1 pb-4">
+        <div className="glass-card p-2 glow-card">
+          {feedItems.length > 0 ? feedItems.map((item, i) => (
+            <div
+              key={item.id}
+              className={`flex items-center gap-3 px-4 py-3 transition-colors hover:bg-white/5 rounded-lg ${
+                item.isPast ? "bg-[#FB923C]/5" : ""
+              } ${i < feedItems.length - 1 ? "border-b border-white/5" : ""}`}
+            >
+              <input
+                type="checkbox"
+                checked={item.completed}
+                onChange={() => item.type === "chore" ? toggleChore(item.id) : toggleReminder(item.id, !item.completed)}
+                className="w-4 h-4 rounded accent-[#818CF8] shrink-0"
+              />
+              <p className="flex-1 text-sm text-[#F5F5F5]">{item.title}</p>
+              {item.assigned_to && !selectedMember && (
+                <span className="text-sm shrink-0">{getMemberAvatar(item.assigned_to)}</span>
+              )}
+              {item.time && (
+                <span className={`text-xs shrink-0 ${item.isPast ? "text-[#FB923C]" : "text-[#A3A3A3]"}`}>
+                  {item.time.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
+                </span>
+              )}
+            </div>
+          )) : (
+            <p className="text-sm text-[#A3A3A3] py-8 text-center">Nothing for today.</p>
+          )}
         </div>
       </div>
 
-      {/* Quick Actions */}
-      <div className="flex flex-wrap gap-3">
-        <button onClick={() => setReminderModalOpen(true)} className="glass-card-hover px-5 py-2.5 text-sm text-[#A3A3A3] hover:text-[#F5F5F5] flex items-center gap-2">
-          ⏰ Add Reminder
-        </button>
-        <button onClick={() => setChoreModalOpen(true)} className="glass-card-hover px-5 py-2.5 text-sm text-[#A3A3A3] hover:text-[#F5F5F5] flex items-center gap-2">
-          🧹 Add Chore
-        </button>
-        <a href="/settings" className="glass-card-hover px-5 py-2.5 text-sm text-[#A3A3A3] hover:text-[#F5F5F5] flex items-center gap-2">
-          ⚙️ Family Settings
-        </a>
+      {/* Marvin Input - Bottom */}
+      <div className="sticky bottom-0 pb-6 pt-2">
+        <MarvinInput />
       </div>
 
-      {/* Add Reminder Modal */}
+      {/* Modals (kept but no trigger buttons on dashboard) */}
       <Modal open={reminderModalOpen} onClose={() => setReminderModalOpen(false)} title="Add Reminder">
         <div className="space-y-3">
           <input value={reminderForm.title} onChange={e => setReminderForm({ ...reminderForm, title: e.target.value })} placeholder="What needs to be done?" className="w-full px-4 py-2.5 glass-input text-sm" />
@@ -269,7 +236,6 @@ export default function DashboardPage() {
         </div>
       </Modal>
 
-      {/* Add Chore Modal */}
       <Modal open={choreModalOpen} onClose={() => setChoreModalOpen(false)} title="Add Chore">
         <div className="space-y-3">
           <input value={choreForm.title} onChange={e => setChoreForm({ ...choreForm, title: e.target.value })} placeholder="What needs to be done?" className="w-full px-4 py-2.5 glass-input text-sm" />

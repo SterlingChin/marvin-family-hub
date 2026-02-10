@@ -47,7 +47,7 @@ export default function FamilyPage() {
   return (
     <div className="max-w-4xl mx-auto space-y-6">
       <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold text-[#F5F5F5]">👨‍👩‍👧‍👦 Family Members</h1>
+        <h1 className="text-2xl font-bold text-[#F5F5F5]">Family Members</h1>
         <button onClick={openAdd} className="px-4 py-2 bg-[#818CF8] text-white rounded-xl text-sm font-medium hover:bg-[#6366F1] transition-colors">
           + Add Member
         </button>
