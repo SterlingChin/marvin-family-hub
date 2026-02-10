@@ -19,7 +19,7 @@ export default function QuickAsk() {
         body: JSON.stringify({ message: q }),
       });
       const data = await res.json();
-      setResponse(data.response || data.error || "No response");
+      setResponse(data.message || data.error || "No response");
     } catch {
       setResponse("Couldn't reach Marvin right now.");
     } finally {
@@ -28,8 +28,8 @@ export default function QuickAsk() {
   };
 
   return (
-    <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-4">
-      <h3 className="font-semibold text-[#1F2937] mb-3">🤖 Ask Marvin</h3>
+    <div className="bg-white rounded-2xl shadow-[0_1px_3px_rgba(180,140,100,0.08)] border border-[#F5F0EB] p-4">
+      <h3 className="font-semibold text-[#292524] mb-3">🤖 Ask Marvin</h3>
       <div className="flex gap-2">
         <input
           type="text"
@@ -37,18 +37,18 @@ export default function QuickAsk() {
           onChange={(e) => setQuery(e.target.value)}
           onKeyDown={(e) => e.key === "Enter" && handleAsk()}
           placeholder="Ask Marvin anything..."
-          className="flex-1 px-4 py-2 rounded-xl border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-blue-200"
+          className="flex-1 px-4 py-2 rounded-xl border border-[#E7E5E4] text-sm focus:outline-none focus:ring-2 focus:ring-[#6366F1]/30 focus:border-[#6366F1]"
         />
         <button
           onClick={handleAsk}
           disabled={loading || !query.trim()}
-          className="px-4 py-2 bg-[#3B82F6] text-white rounded-xl text-sm font-medium hover:bg-blue-600 disabled:opacity-50 transition-colors"
+          className="px-4 py-2 bg-[#6366F1] text-white rounded-xl text-sm font-medium hover:bg-[#5558E6] disabled:opacity-50 transition-colors"
         >
           {loading ? "..." : "Ask"}
         </button>
       </div>
       {response && (
-        <div className="mt-3 p-3 bg-purple-50 rounded-xl text-sm text-[#1F2937]">
+        <div className="mt-3 p-3 bg-[#6366F1]/5 rounded-xl text-sm text-[#292524]">
           <span className="mr-1">🤖</span>{response}
         </div>
       )}

@@ -38,20 +38,20 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
 
   if (!isLoaded || loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-gray-400 text-lg">Loading...</div>
+      <div className="min-h-screen flex items-center justify-center bg-[#FFF8F0]">
+        <div className="text-[#A8A29E] text-lg">Loading...</div>
       </div>
     );
   }
 
   return (
     <FamilyContext.Provider value={{ family, loading, refresh: fetchFamily }}>
-      <div className="min-h-screen flex bg-[#F8FAFC]">
+      <div className="min-h-screen flex bg-[#FFF8F0]">
         <Sidebar />
         <div className="flex-1 flex flex-col min-w-0">
-          <header className="bg-white border-b border-gray-100 px-6 py-3 flex items-center justify-between shrink-0">
+          <header className="bg-white/80 backdrop-blur-sm border-b border-[#F5F0EB] px-6 py-3 flex items-center justify-between shrink-0">
             <div className="ml-12 md:ml-0">
-              <h2 className="font-semibold text-[#1F2937]">{family?.name || "Marvin Family Hub"}</h2>
+              <h2 className="font-semibold text-[#292524]">{family?.name || "Marvin Family Hub"}</h2>
             </div>
             <UserButton afterSignOutUrl="/" />
           </header>

@@ -43,6 +43,16 @@ export async function initDb() {
       completed BOOLEAN DEFAULT FALSE,
       created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
     );
+    CREATE TABLE IF NOT EXISTS chores (
+      id TEXT PRIMARY KEY DEFAULT gen_random_uuid(),
+      family_id TEXT REFERENCES families(id) ON DELETE CASCADE,
+      title TEXT NOT NULL,
+      assigned_to TEXT,
+      frequency TEXT DEFAULT 'daily',
+      completed BOOLEAN DEFAULT FALSE,
+      completed_at TIMESTAMP,
+      created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    );
     CREATE TABLE IF NOT EXISTS family_context (
       id TEXT PRIMARY KEY DEFAULT gen_random_uuid(),
       family_id TEXT REFERENCES families(id) ON DELETE CASCADE,

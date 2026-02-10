@@ -44,23 +44,23 @@ export default function RemindersPage() {
   return (
     <div className="max-w-3xl mx-auto space-y-6">
       <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold text-[#1F2937]">⏰ Reminders</h1>
-        <button onClick={() => setModalOpen(true)} className="px-4 py-2 bg-[#3B82F6] text-white rounded-xl text-sm font-medium hover:bg-blue-600 transition-colors">
+        <h1 className="text-2xl font-bold text-[#292524]">⏰ Reminders</h1>
+        <button onClick={() => setModalOpen(true)} className="px-4 py-2 bg-[#6366F1] text-white rounded-xl text-sm font-medium hover:bg-[#5558E6] transition-colors">
           + Add Reminder
         </button>
       </div>
 
       <div>
-        <h2 className="font-semibold text-[#1F2937] mb-3">Upcoming</h2>
+        <h2 className="font-semibold text-[#292524] mb-3">Upcoming</h2>
         <div className="space-y-2">
           {upcoming.length > 0 ? upcoming.map(r => <ReminderItem key={r.id} reminder={r} onToggle={handleToggle} onDelete={handleDelete} />)
-            : <p className="text-sm text-gray-400">No upcoming reminders 🎉</p>}
+            : <p className="text-sm text-[#A8A29E]">No upcoming reminders 🎉</p>}
         </div>
       </div>
 
       {completed.length > 0 && (
         <div>
-          <h2 className="font-semibold text-gray-400 mb-3">Completed</h2>
+          <h2 className="font-semibold text-[#A8A29E] mb-3">Completed</h2>
           <div className="space-y-2">
             {completed.map(r => <ReminderItem key={r.id} reminder={r} onToggle={handleToggle} onDelete={handleDelete} />)}
           </div>
@@ -69,13 +69,13 @@ export default function RemindersPage() {
 
       <Modal open={modalOpen} onClose={() => setModalOpen(false)} title="Add Reminder">
         <div className="space-y-3">
-          <input value={form.title} onChange={e => setForm({ ...form, title: e.target.value })} placeholder="What needs to be done?" className="w-full px-4 py-2 rounded-xl border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-blue-200" />
-          <input type="datetime-local" value={form.due_date} onChange={e => setForm({ ...form, due_date: e.target.value })} className="w-full px-4 py-2 rounded-xl border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-blue-200" />
-          <select value={form.assigned_to} onChange={e => setForm({ ...form, assigned_to: e.target.value })} className="w-full px-4 py-2 rounded-xl border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-blue-200">
+          <input value={form.title} onChange={e => setForm({ ...form, title: e.target.value })} placeholder="What needs to be done?" className="w-full px-4 py-2 rounded-xl border border-[#E7E5E4] text-sm focus:outline-none focus:ring-2 focus:ring-[#6366F1]/30 focus:border-[#6366F1]" />
+          <input type="datetime-local" value={form.due_date} onChange={e => setForm({ ...form, due_date: e.target.value })} className="w-full px-4 py-2 rounded-xl border border-[#E7E5E4] text-sm focus:outline-none focus:ring-2 focus:ring-[#6366F1]/30 focus:border-[#6366F1]" />
+          <select value={form.assigned_to} onChange={e => setForm({ ...form, assigned_to: e.target.value })} className="w-full px-4 py-2 rounded-xl border border-[#E7E5E4] text-sm focus:outline-none focus:ring-2 focus:ring-[#6366F1]/30 focus:border-[#6366F1]">
             <option value="">Assign to...</option>
             {members.map(m => <option key={m.id} value={m.name}>{m.name}</option>)}
           </select>
-          <button onClick={handleAdd} disabled={!form.title.trim()} className="w-full py-2 bg-[#3B82F6] text-white rounded-xl font-medium hover:bg-blue-600 disabled:opacity-50 transition-colors">
+          <button onClick={handleAdd} disabled={!form.title.trim()} className="w-full py-2 bg-[#6366F1] text-white rounded-xl font-medium hover:bg-[#5558E6] disabled:opacity-50 transition-colors">
             Add Reminder
           </button>
         </div>

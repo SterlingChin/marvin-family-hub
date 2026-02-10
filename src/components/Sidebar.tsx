@@ -8,6 +8,7 @@ const navItems = [
   { href: "/dashboard", label: "Dashboard", icon: "🏠" },
   { href: "/chat", label: "Chat", icon: "💬" },
   { href: "/family", label: "Family", icon: "👨‍👩‍👧‍👦" },
+  { href: "/chores", label: "Chores", icon: "🧹" },
   { href: "/reminders", label: "Reminders", icon: "⏰" },
   { href: "/settings", label: "Settings", icon: "⚙️" },
 ];
@@ -37,13 +38,13 @@ export default function Sidebar() {
 
       {/* Sidebar */}
       <aside
-        className={`fixed md:static z-40 top-0 left-0 h-full w-64 bg-white shadow-md flex flex-col transition-transform duration-200 ${
+        className={`fixed md:static z-40 top-0 left-0 h-full w-64 bg-[#1C1917] flex flex-col transition-transform duration-200 ${
           open ? "translate-x-0" : "-translate-x-full md:translate-x-0"
         }`}
       >
-        <div className="p-6 border-b border-gray-100">
-          <h1 className="text-xl font-bold text-[#3B82F6]">🤖 Marvin</h1>
-          <p className="text-xs text-gray-400 mt-1">Family Hub</p>
+        <div className="p-6 border-b border-[#292524]">
+          <h1 className="text-xl font-bold text-[#6366F1]">🤖 Marvin</h1>
+          <p className="text-xs text-[#78716C] mt-1">Family Hub</p>
         </div>
 
         <nav className="flex-1 p-4 space-y-1">
@@ -56,8 +57,8 @@ export default function Sidebar() {
                 onClick={() => setOpen(false)}
                 className={`flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-colors ${
                   active
-                    ? "bg-blue-50 text-[#3B82F6]"
-                    : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"
+                    ? "bg-[#6366F1]/15 text-[#A5B4FC]"
+                    : "text-[#A8A29E] hover:bg-[#292524] hover:text-[#D6D3D1]"
                 }`}
               >
                 <span className="text-lg">{item.icon}</span>

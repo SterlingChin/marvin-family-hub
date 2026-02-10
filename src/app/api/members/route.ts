@@ -6,7 +6,7 @@ export async function GET() {
   try {
     const family = await requireFamily();
     const result = await query('SELECT * FROM family_members WHERE family_id = $1 ORDER BY created_at', [family.id]);
-    return NextResponse.json(result.rows);
+    return NextResponse.json({ members: result.rows });
   } catch (e) {
     if ((e as Error).message === 'Unauthorized') return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });

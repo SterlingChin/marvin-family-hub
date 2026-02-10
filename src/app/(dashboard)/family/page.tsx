@@ -46,8 +46,8 @@ export default function FamilyPage() {
   return (
     <div className="max-w-4xl mx-auto space-y-6">
       <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold text-[#1F2937]">👨‍👩‍👧‍👦 Family Members</h1>
-        <button onClick={openAdd} className="px-4 py-2 bg-[#3B82F6] text-white rounded-xl text-sm font-medium hover:bg-blue-600 transition-colors">
+        <h1 className="text-2xl font-bold text-[#292524]">👨‍👩‍👧‍👦 Family Members</h1>
+        <button onClick={openAdd} className="px-4 py-2 bg-[#6366F1] text-white rounded-xl text-sm font-medium hover:bg-[#5558E6] transition-colors">
           + Add Member
         </button>
       </div>
@@ -57,20 +57,20 @@ export default function FamilyPage() {
           <FamilyMemberCard key={m.id} member={m} index={i} onEdit={openEdit} onDelete={handleDelete} />
         ))}
       </div>
-      {members.length === 0 && <p className="text-gray-400 text-center py-8">No family members yet. Add your first!</p>}
+      {members.length === 0 && <p className="text-[#A8A29E] text-center py-8">No family members yet. Add your first!</p>}
 
       <Modal open={modalOpen} onClose={() => setModalOpen(false)} title={editingId ? "Edit Member" : "Add Member"}>
         <div className="space-y-3">
-          <input value={form.name} onChange={e => setForm({ ...form, name: e.target.value })} placeholder="Name" className="w-full px-4 py-2 rounded-xl border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-blue-200" />
-          <select value={form.role} onChange={e => setForm({ ...form, role: e.target.value })} className="w-full px-4 py-2 rounded-xl border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-blue-200">
+          <input value={form.name} onChange={e => setForm({ ...form, name: e.target.value })} placeholder="Name" className="w-full px-4 py-2 rounded-xl border border-[#E7E5E4] text-sm focus:outline-none focus:ring-2 focus:ring-[#6366F1]/30 focus:border-[#6366F1]" />
+          <select value={form.role} onChange={e => setForm({ ...form, role: e.target.value })} className="w-full px-4 py-2 rounded-xl border border-[#E7E5E4] text-sm focus:outline-none focus:ring-2 focus:ring-[#6366F1]/30 focus:border-[#6366F1]">
             <option value="parent">Parent</option>
             <option value="child">Child</option>
           </select>
-          <input type="number" value={form.age} onChange={e => setForm({ ...form, age: e.target.value })} placeholder="Age" className="w-full px-4 py-2 rounded-xl border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-blue-200" />
-          <input value={form.school} onChange={e => setForm({ ...form, school: e.target.value })} placeholder="School" className="w-full px-4 py-2 rounded-xl border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-blue-200" />
-          <input value={form.work} onChange={e => setForm({ ...form, work: e.target.value })} placeholder="Work" className="w-full px-4 py-2 rounded-xl border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-blue-200" />
-          <textarea value={form.notes} onChange={e => setForm({ ...form, notes: e.target.value })} placeholder="Notes" rows={3} className="w-full px-4 py-2 rounded-xl border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-blue-200 resize-none" />
-          <button onClick={handleSave} disabled={!form.name.trim()} className="w-full py-2 bg-[#3B82F6] text-white rounded-xl font-medium hover:bg-blue-600 disabled:opacity-50 transition-colors">
+          <input type="number" value={form.age} onChange={e => setForm({ ...form, age: e.target.value })} placeholder="Age" className="w-full px-4 py-2 rounded-xl border border-[#E7E5E4] text-sm focus:outline-none focus:ring-2 focus:ring-[#6366F1]/30 focus:border-[#6366F1]" />
+          <input value={form.school} onChange={e => setForm({ ...form, school: e.target.value })} placeholder="School" className="w-full px-4 py-2 rounded-xl border border-[#E7E5E4] text-sm focus:outline-none focus:ring-2 focus:ring-[#6366F1]/30 focus:border-[#6366F1]" />
+          <input value={form.work} onChange={e => setForm({ ...form, work: e.target.value })} placeholder="Work" className="w-full px-4 py-2 rounded-xl border border-[#E7E5E4] text-sm focus:outline-none focus:ring-2 focus:ring-[#6366F1]/30 focus:border-[#6366F1]" />
+          <textarea value={form.notes} onChange={e => setForm({ ...form, notes: e.target.value })} placeholder="Notes" rows={3} className="w-full px-4 py-2 rounded-xl border border-[#E7E5E4] text-sm focus:outline-none focus:ring-2 focus:ring-[#6366F1]/30 focus:border-[#6366F1] resize-none" />
+          <button onClick={handleSave} disabled={!form.name.trim()} className="w-full py-2 bg-[#6366F1] text-white rounded-xl font-medium hover:bg-[#5558E6] disabled:opacity-50 transition-colors">
             {editingId ? "Save Changes" : "Add Member"}
           </button>
         </div>

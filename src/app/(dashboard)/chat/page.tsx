@@ -79,11 +79,11 @@ export default function ChatPage() {
         body: JSON.stringify({ conversationId: selectedId, message }),
       });
       const data = await res.json();
-      if (data.response) {
+      if (data.message) {
         const assistantMsg: Message = {
           id: `resp-${Date.now()}`,
           role: "assistant",
-          content: data.response,
+          content: data.message,
           created_at: new Date().toISOString(),
         };
         setMessages(prev => [...prev, assistantMsg]);
@@ -95,9 +95,9 @@ export default function ChatPage() {
   };
 
   return (
-    <div className="h-[calc(100vh-73px)] flex rounded-2xl overflow-hidden bg-white shadow-sm border border-gray-100">
+    <div className="h-[calc(100vh-73px)] flex rounded-2xl overflow-hidden bg-white shadow-[0_1px_3px_rgba(180,140,100,0.08)] border border-[#F5F0EB]">
       {/* Conversation list */}
-      <div className={`w-full md:w-72 border-r border-gray-100 shrink-0 ${mobileView === "chat" ? "hidden md:flex md:flex-col" : "flex flex-col"}`}>
+      <div className={`w-full md:w-72 border-r border-[#F5F0EB] shrink-0 ${mobileView === "chat" ? "hidden md:flex md:flex-col" : "flex flex-col"}`}>
         <ConversationList
           conversations={conversations}
           selectedId={selectedId || undefined}
@@ -110,25 +110,25 @@ export default function ChatPage() {
       <div className={`flex-1 flex flex-col ${mobileView === "list" ? "hidden md:flex" : "flex"}`}>
         {selectedId ? (
           <>
-            <div className="p-3 border-b border-gray-100 flex items-center gap-2">
+            <div className="p-3 border-b border-[#F5F0EB] flex items-center gap-2">
               <button
                 onClick={() => setMobileView("list")}
-                className="md:hidden text-[#3B82F6] text-sm font-medium"
+                className="md:hidden text-[#6366F1] text-sm font-medium"
               >
                 ← Back
               </button>
-              <span className="text-sm font-medium text-[#1F2937]">
+              <span className="text-sm font-medium text-[#292524]">
                 {conversations.find(c => c.id === selectedId)?.title || "Chat"}
               </span>
             </div>
-            <div className="flex-1 overflow-y-auto p-4 space-y-3">
+            <div className="flex-1 overflow-y-auto p-4 space-y-3 bg-[#FFFBF5]">
               {messages.map(m => <ChatMessage key={m.id} message={m} />)}
               <div ref={messagesEndRef} />
             </div>
             <ChatInput onSend={handleSend} disabled={sending} placeholder="Message Marvin..." />
           </>
         ) : (
-          <div className="flex-1 flex items-center justify-center text-gray-400 text-sm">
+          <div className="flex-1 flex items-center justify-center text-[#A8A29E] text-sm">
             Select a conversation or start a new one
           </div>
         )}
