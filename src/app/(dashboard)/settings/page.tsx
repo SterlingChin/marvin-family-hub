@@ -2,11 +2,16 @@
 
 import { useEffect, useState } from "react";
 import { useFamily } from "../layout";
+import GoogleCalendarSettings from "@/components/GoogleCalendarSettings";
 
 interface ContextEntry {
   id: string;
   key: string;
   value: string;
+}
+
+interface Member {
+  name: string;
 }
 
 export default function SettingsPage() {
@@ -16,6 +21,7 @@ export default function SettingsPage() {
   const [newKey, setNewKey] = useState("");
   const [newValue, setNewValue] = useState("");
   const [saving, setSaving] = useState(false);
+  const [members, setMembers] = useState<Member[]>([]);
 
   useEffect(() => {
     if (family) setFamilyName(family.name);
@@ -23,6 +29,7 @@ export default function SettingsPage() {
 
   useEffect(() => {
     fetch("/api/context").then(r => r.ok ? r.json() : { contexts: [] }).then(d => setContexts(d.contexts || [])).catch(() => {});
+    fetch("/api/members").then(r => r.ok ? r.json() : { members: [] }).then(d => setMembers(d.members || [])).catch(() => {});
   }, []);
 
   const saveFamilyName = async () => {
@@ -66,6 +73,9 @@ export default function SettingsPage() {
           </button>
         </div>
       </div>
+
+      {/* Google Calendar */}
+      <GoogleCalendarSettings members={members} />
 
       {/* Family Context */}
       <div className="glass-card p-6 space-y-4">

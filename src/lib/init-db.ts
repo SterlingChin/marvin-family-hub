@@ -54,6 +54,24 @@ export async function initDb() {
       completed_at TIMESTAMP,
       created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
     );
+    CREATE TABLE IF NOT EXISTS google_tokens (
+      id TEXT PRIMARY KEY DEFAULT gen_random_uuid(),
+      family_id TEXT UNIQUE REFERENCES families(id) ON DELETE CASCADE,
+      access_token TEXT NOT NULL,
+      refresh_token TEXT NOT NULL,
+      token_expiry TIMESTAMP NOT NULL,
+      created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+      updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    );
+    CREATE TABLE IF NOT EXISTS calendar_config (
+      id TEXT PRIMARY KEY DEFAULT gen_random_uuid(),
+      family_id TEXT REFERENCES families(id) ON DELETE CASCADE,
+      calendar_id TEXT NOT NULL,
+      calendar_name TEXT,
+      assigned_member TEXT,
+      enabled BOOLEAN DEFAULT TRUE,
+      created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    );
     CREATE TABLE IF NOT EXISTS family_context (
       id TEXT PRIMARY KEY DEFAULT gen_random_uuid(),
       family_id TEXT REFERENCES families(id) ON DELETE CASCADE,

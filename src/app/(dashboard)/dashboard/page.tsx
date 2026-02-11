@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { useFamily } from "../layout";
 import MarvinInput from "@/components/MarvinInput";
 import Modal from "@/components/Modal";
+import ScheduleCard from "@/components/ScheduleCard";
 import type { FamilyMember } from "@/components/FamilyMemberCard";
 import type { Reminder } from "@/components/ReminderItem";
 
@@ -263,8 +264,11 @@ export default function DashboardPage() {
           </div>
         </div>
 
-        {/* Right: Marvin's proactive card + input */}
+        {/* Right: Schedule + Marvin's proactive card + input */}
         <div className="flex flex-col gap-4 stagger-item animate-fade-in-up stagger-5">
+          {/* Google Calendar Events */}
+          <ScheduleCard />
+
           {/* Proactive insight */}
           <div className="glass-card p-5 glow-card">
             <div className="flex items-start gap-3">
